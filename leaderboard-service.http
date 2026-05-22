@@ -14,3 +14,8 @@ GET {{leaderboard_service_HostAddress}}/leaderboard/testGame/score?player=testPl
 Content-Type: application/json
 
 ###
+
+GET {{leaderboard_service_HostAddress}}/leaderboard/testGame/top?count=3
+Content-Type: application/json
+
+###

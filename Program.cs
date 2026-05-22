@@ -1,5 +1,9 @@
 using StackExchange.Redis;
 
+//=== Constants
+
+const string KeyBase = "leaderboard:";
+
 //=== Setup
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +29,7 @@ app.UseHttpsRedirection();
 //Map Requests
 app.MapPost("/leaderboard/{game}/score", PostScore);
 app.MapGet("/leaderboard/{game}/score", GetScore);
+app.MapGet("/leaderboard/{game}/top", GetTopPlayers);
 
 //Run
 app.Run();
@@ -35,7 +40,7 @@ app.Run();
 static async Task<IResult> PostScore(string game, ScoreEntry entry, IConnectionMultiplexer redis)
 {
     var db = redis.GetDatabase();
-    await db.SortedSetAddAsync($"leaderboard:{game}", entry.Player, entry.Score);
+    await db.SortedSetAddAsync($"{KeyBase}{game}", entry.Player, entry.Score);
     return Results.Ok();
 }
 
@@ -43,8 +48,15 @@ static async Task<IResult> PostScore(string game, ScoreEntry entry, IConnectionM
 static async Task<double> GetScore(string game, string player, IConnectionMultiplexer redis)
 {
     var db = redis.GetDatabase();
-    double? score = await db.SortedSetScoreAsync($"leaderboard:{game}", player);
+    double? score = await db.SortedSetScoreAsync($"{KeyBase}{game}", player);
     return score ?? 0;
+}
+
+static async Task<string[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
+{
+    var db = redis.GetDatabase();
+    SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{game}", 0, count - 1, Order.Descending);
+    return [.. entries.Select(x => x.Element.ToString())];
 }
 
 //=== Definitions
