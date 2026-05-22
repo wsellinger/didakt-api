@@ -4,8 +4,13 @@ POST {{leaderboard_service_HostAddress}}/leaderboard/testGame/score
 Content-Type: application/json
 
 {
-  "player": "bill",
+  "player": "testPlayer",
   "score": 9500
 }
+
+###
+
+GET {{leaderboard_service_HostAddress}}/leaderboard/testGame/score?player=testPlayer
+Content-Type: application/json
 
 ###
