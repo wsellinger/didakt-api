@@ -52,13 +52,19 @@ static async Task<double> GetScore(string game, string player, IConnectionMultip
     return score ?? 0;
 }
 
-static async Task<string[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
+static async Task<PlayerScore[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
 {
     var db = redis.GetDatabase();
     SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{game}", 0, count - 1, Order.Descending);
-    return [.. entries.Select(x => x.Element.ToString())];
+    return [.. entries.Select(x => new PlayerScore(x.Element.ToString(), x.Score))];
 }
 
-//=== Definitions
+//=== Data Structures
+
+//Input
 
 record ScoreEntry(string Player, double Score);
+
+//Output
+
+record PlayerScore(string Player, double Score);
