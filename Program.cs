@@ -1,5 +1,7 @@
 using StackExchange.Redis;
 
+//=== Setup
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,13 +23,21 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //Map Requests
-app.MapPost("/leaderboard/{game}/score", async (string game, ScoreEntry entry, IConnectionMultiplexer redis) =>
+app.MapPost("/leaderboard/{game}/score", PostScore);
+
+//Run
+app.Run();
+
+//=== Endpoints
+
+//Post Score
+static async Task<IResult> PostScore(string game, ScoreEntry entry, IConnectionMultiplexer redis)
 {
     var db = redis.GetDatabase();
     await db.SortedSetAddAsync($"leaderboard:{game}", entry.Player, entry.Score);
     return Results.Ok();
-});
+}
 
-app.Run();
+//=== Definitions
 
 record ScoreEntry(string Player, double Score);
