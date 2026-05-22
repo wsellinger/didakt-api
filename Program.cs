@@ -14,7 +14,7 @@ builder.Services.AddOpenApi();
 
 //Add Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect("localhost:6379"));
+    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!));
 
 var app = builder.Build();
 
