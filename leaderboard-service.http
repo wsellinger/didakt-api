@@ -1,6 +1,11 @@
 @leaderboard_service_HostAddress = http://localhost:5223
 
-GET {{leaderboard_service_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{leaderboard_service_HostAddress}}/leaderboard/testGame/score
+Content-Type: application/json
+
+{
+  "player": "bill",
+  "score": 9500
+}
 
 ###
