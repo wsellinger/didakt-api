@@ -56,7 +56,8 @@ static async Task<PlayerScore[]> GetTopPlayers(string game, long count, IConnect
 {
     var db = redis.GetDatabase();
     SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{game}", 0, count - 1, Order.Descending);
-    return [.. entries.Select(x => new PlayerScore(x.Element.ToString(), x.Score))];
+    var rank = 0;
+    return [.. entries.Select(x => new PlayerScore(++rank, x.Element.ToString(), x.Score))];
 }
 
 //=== Data Structures
@@ -67,4 +68,4 @@ record ScoreEntry(string Player, double Score);
 
 //Output
 
-record PlayerScore(string Player, double Score);
+record PlayerScore(int Rank, string Player, double Score);
