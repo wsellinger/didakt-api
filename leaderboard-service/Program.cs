@@ -9,17 +9,22 @@ const string KeyBase = "leaderboard:";
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+//Add Services
+
+//Add OpenApi
 builder.Services.AddOpenApi();
 
 //Add Redis
-builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!));
+{
+    var connectionString = builder.Configuration.GetConnectionString("Redis")!;
+    var connection = ConnectionMultiplexer.Connect(connectionString);
+    builder.Services.AddSingleton<IConnectionMultiplexer>(connection);
+}
 
+//Build App
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//Configure App
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

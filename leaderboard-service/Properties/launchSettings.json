@@ -1,13 +1,15 @@
 {
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "leaderboard-service": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "scalar/v1",
+      "applicationUrl": "https://localhost:58792;http://localhost:58793",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:58792;http://localhost:58793"
+      }
     }
   }
 }
