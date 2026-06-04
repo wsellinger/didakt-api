@@ -5,5 +5,6 @@
     <File Path="docker-compose.yml" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="auth-service/auth-service.csproj" />
   <Project Path="leaderboard-service/leaderboard-service.csproj" />
 </Solution>

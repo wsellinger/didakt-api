@@ -11,4 +11,7 @@ services:
       - ConnectionStrings__Redis=redis:6379
     depends_on:
       - redis
-  
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "5224:8080"
