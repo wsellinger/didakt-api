@@ -1,4 +1,8 @@
-@leaderboard_service_HostAddress = http://localhost:5223
+//Debug
+@leaderboard_service_HostAddress = http://localhost:58793
+
+//Docker
+//@leaderboard_service_HostAddress = http://localhost:5223
 
 POST {{leaderboard_service_HostAddress}}/leaderboard/testGame/score
 Content-Type: application/json
