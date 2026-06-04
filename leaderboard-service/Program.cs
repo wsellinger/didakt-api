@@ -52,6 +52,7 @@ static async Task<double> GetScore(string game, string player, IConnectionMultip
     return score ?? 0;
 }
 
+//Get Top Players
 static async Task<PlayerScore[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
 {
     var db = redis.GetDatabase();
