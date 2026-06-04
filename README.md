@@ -1,2 +1,5 @@
-# Leaderboard Service
-A simple leaderboard service in .NET 10, utilizing Docker and Redis
+# Game Backend
+A game backend solution in .NET 10, utilizing Docker
+
+## Leaderboard Service
+A simple leaderboard service in, utilizing Docker and Redis
