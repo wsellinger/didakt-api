@@ -11,7 +11,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
-app.MapGet("/", () => "Hello World!");
+app.MapPost("/auth/register", PostRegister);
 
 //Run
 app.Run();
+
+//=== Endpoints
+
+//Register Player
+static async Task<IResult> PostRegister()
+{
+    return Results.Ok();
+}
