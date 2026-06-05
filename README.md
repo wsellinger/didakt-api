@@ -1,5 +1,5 @@
-# Game Backend
-A game backend solution in .NET 10, utilizing Docker
+# Didakt Api
+A game backend Api written in .NET 10
 
 ## Leaderboard Service
 A simple leaderboard service in, utilizing Docker and Redis
