@@ -1,3 +1,4 @@
+using Didakt.Api.Leaderboard.Extensions;
 using Scalar.AspNetCore;
 using StackExchange.Redis;
 
@@ -8,18 +9,7 @@ const string KeyBase = "leaderboard:";
 //=== Setup
 
 var builder = WebApplication.CreateBuilder(args);
-
-//Add Services
-
-//Add OpenApi
-builder.Services.AddOpenApi();
-
-//Add Redis
-{
-    var connectionString = builder.Configuration.GetConnectionString("Redis")!;
-    var connection = ConnectionMultiplexer.Connect(connectionString);
-    builder.Services.AddSingleton<IConnectionMultiplexer>(connection);
-}
+builder.Services.AddServices(builder.Configuration);
 
 //Build App
 var app = builder.Build();
