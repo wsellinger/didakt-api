@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <InternalsVisibleTo Include="Didakt.Api.Leaderboard.Tests" />
   </ItemGroup>
   
