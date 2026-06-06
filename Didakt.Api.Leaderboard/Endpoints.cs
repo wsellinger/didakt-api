@@ -1,0 +1,54 @@
+using StackExchange.Redis;
+
+namespace Didakt.Api.Leaderboard;
+
+public static class Endpoints
+{
+    //=== Mappings
+
+    extension(WebApplication app)
+    {
+        public WebApplication MapEndpoints()
+        {
+            var group = app.MapGroup("/leaderboard/{game}/");
+            group.MapPost("score", Endpoints.PostScore);
+            group.MapGet("score", Endpoints.GetScore);
+            group.MapGet("top", Endpoints.GetTopPlayers);
+
+            return app;
+        }
+    }
+
+    const string KeyBase = "leaderboard:";
+
+    //=== Endpoints
+
+    //Post Score
+    public record PostScoreRequest(string Player, double Score);
+
+    public static async Task<IResult> PostScore(string game, PostScoreRequest entry, IConnectionMultiplexer redis)
+    {
+        var db = redis.GetDatabase();
+        await db.SortedSetAddAsync($"{KeyBase}{game}", entry.Player, entry.Score);
+        return Results.Ok();
+    }
+
+    //Get Score
+    public static async Task<double> GetScore(string game, string player, IConnectionMultiplexer redis)
+    {
+        var db = redis.GetDatabase();
+        double? score = await db.SortedSetScoreAsync($"{KeyBase}{game}", player);
+        return score ?? 0;
+    }
+
+    //Get Top Players
+    public record GetTopPlayersResponse(int Rank, string Player, double Score);
+
+    public static async Task<GetTopPlayersResponse[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
+    {
+        var db = redis.GetDatabase();
+        SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{game}", 0, count - 1, Order.Descending);
+        var rank = 0;
+        return [.. entries.Select(x => new GetTopPlayersResponse(++rank, x.Element.ToString(), x.Score))];
+    }
+}
