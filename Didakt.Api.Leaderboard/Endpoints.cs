@@ -2,13 +2,13 @@ using StackExchange.Redis;
 
 namespace Didakt.Api.Leaderboard;
 
-public static class Endpoints
+internal static class Endpoints
 {
     //=== Mappings
 
     extension(WebApplication app)
     {
-        public WebApplication MapEndpoints()
+        internal WebApplication MapEndpoints()
         {
             var group = app.MapGroup("/leaderboard/{game}/");
             group.MapPost("score", Endpoints.PostScore);
@@ -24,9 +24,9 @@ public static class Endpoints
     const string KeyBase = "leaderboard:";
 
     //Post Score
-    public record PostScoreRequest(string Player, double Score);
+    internal record PostScoreRequest(string Player, double Score);
 
-    public static async Task<IResult> PostScore(string game, PostScoreRequest entry, IConnectionMultiplexer redis)
+    internal static async Task<IResult> PostScore(string game, PostScoreRequest entry, IConnectionMultiplexer redis)
     {
         var db = redis.GetDatabase();
         await db.SortedSetAddAsync($"{KeyBase}{game}", entry.Player, entry.Score);
@@ -34,7 +34,7 @@ public static class Endpoints
     }
 
     //Get Score
-    public static async Task<double> GetScore(string game, string player, IConnectionMultiplexer redis)
+    internal static async Task<double> GetScore(string game, string player, IConnectionMultiplexer redis)
     {
         var db = redis.GetDatabase();
         double? score = await db.SortedSetScoreAsync($"{KeyBase}{game}", player);
@@ -42,9 +42,9 @@ public static class Endpoints
     }
 
     //Get Top Players
-    public record GetTopPlayersResponse(int Rank, string Player, double Score);
+    internal record GetTopPlayersResponse(int Rank, string Player, double Score);
 
-    public static async Task<GetTopPlayersResponse[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
+    internal static async Task<GetTopPlayersResponse[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
     {
         var db = redis.GetDatabase();
         SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{game}", 0, count - 1, Order.Descending);

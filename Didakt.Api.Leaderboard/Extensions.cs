@@ -3,11 +3,11 @@ using StackExchange.Redis;
 
 namespace Didakt.Api.Leaderboard;
 
-public static class Extensions
+internal static class Extensions
 {
     extension(IServiceCollection services)
     {
-        public IServiceCollection AddServices(IConfiguration configuration)
+        internal IServiceCollection AddServices(IConfiguration configuration)
         {
             services.AddOpenApi();
             AddRedis(services, configuration);
@@ -25,7 +25,7 @@ public static class Extensions
 
     extension(WebApplication app)
     {
-        public WebApplication ConfigureApp()
+        internal WebApplication ConfigureApp()
         {
             if (app.Environment.IsDevelopment())
             {
