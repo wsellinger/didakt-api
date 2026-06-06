@@ -6,5 +6,6 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="Didakt.Api.Auth/Didakt.Api.Auth.csproj" />
+  <Project Path="Didakt.Api.Leaderboard.Tests/Didakt.Api.Leaderboard.Tests.csproj" Id="e6b9864a-93b2-4ef1-9c31-a67a866b1991" />
   <Project Path="Didakt.Api.Leaderboard/Didakt.Api.Leaderboard.csproj" />
 </Solution>
