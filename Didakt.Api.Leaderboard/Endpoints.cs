@@ -19,9 +19,9 @@ public static class Endpoints
         }
     }
 
-    const string KeyBase = "leaderboard:";
-
     //=== Endpoints
+
+    const string KeyBase = "leaderboard:";
 
     //Post Score
     public record PostScoreRequest(string Player, double Score);
