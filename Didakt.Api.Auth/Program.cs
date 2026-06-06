@@ -1,25 +1,9 @@
-using Scalar.AspNetCore;
+using Didakt.Api.Auth;
 
-//Build App
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddOpenApi();
+builder.Services.AddServices(builder.Configuration);
+
 var app = builder.Build();
-
-//Configure App
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-}
-app.MapPost("/auth/register", PostRegister);
-
-//Run
+app.ConfigureApp();
+app.MapEndpoints();
 app.Run();
-
-//=== Endpoints
-
-//Register Player
-static async Task<IResult> PostRegister()
-{
-    return Results.Ok();
-}
