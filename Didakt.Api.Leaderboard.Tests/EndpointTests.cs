@@ -27,12 +27,14 @@ public class EndpointTests
         var scoreAmount = 1234;
         var postScoreRequest = new Endpoints.PostScoreRequest(playerName, scoreAmount);
 
-        _database.Setup(x => x.SortedSetAddAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<double>(), It.IsAny<SortedSetWhen>(), It.IsAny<CommandFlags>()));
+        _database.Setup(x => x.SortedSetAddAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<double>()));
 
         //Act
         var result = await Endpoints.PostScore(gameName, postScoreRequest, _connection.Object);
 
         //Assert
+        _database.Verify(x => x.SortedSetAddAsync(It.Is<RedisKey>(x => x.ToString().Contains(gameName)), playerName, scoreAmount), Times.Once);
+
         Assert.IsType<Ok>(result);
     }
 }
