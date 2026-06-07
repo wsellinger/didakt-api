@@ -5,11 +5,15 @@ namespace Didakt.Api.Auth.Tests
 {
     public class RegisterRequestValidatorTests
     {
+        private const string MaxLengthPassword = 
+            "123456789012345678901234567890123456789012345678901234567890123" +
+            "45678901234567890123456789012345678901234567890123456789012345678";
+
         public RegisterRequestValidatorTests() { }
 
         [Theory]
         [InlineData("123", "123456789012")] //Min Size
-        [InlineData("12345678901234567890", "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678")] //Max Size
+        [InlineData("12345678901234567890", MaxLengthPassword)] //Max Size
         [InlineData("a-B_3", "!@#$%^&*()-_")] //Allowed Chars
         public void Validate_ValidInput_IsValid(string userName, string password)
         {
@@ -30,7 +34,7 @@ namespace Didakt.Api.Auth.Tests
         [InlineData("12", "123456789012")] //Short userName
         [InlineData("123", "12345678901")] //Short password
         [InlineData("123456789012345678901", "123456789012")] //Long userName
-        [InlineData("123", "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789")] //Long password
+        [InlineData("123", MaxLengthPassword + "9")] //Long password
         [InlineData("a@c", "12345678901")] //Invalid character in userName
         [InlineData("-abc", "12345678901")] //Invalid character at start of userName
         [InlineData("_abc", "12345678901")] //Invalid character at start of userName
