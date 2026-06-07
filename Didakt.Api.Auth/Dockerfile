@@ -4,9 +4,9 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore Didakt.Api.Leaderboard.csproj
-RUN dotnet publish Didakt.Api.Leaderboard.csproj -c Release -o /app/publish
+RUN dotnet restore Didakt.Api.Auth.csproj
+RUN dotnet publish Didakt.Api.Auth.csproj -c Release -o /app/publish
 
 FROM base AS final
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "didakt.api.leaderboard.dll"]
+ENTRYPOINT ["dotnet", "didakt.api.auth.dll"]

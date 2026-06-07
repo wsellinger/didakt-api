@@ -3,15 +3,21 @@ services:
     image: redis
     ports:
       - "6379:6379"
-  leaderboard-service:
-    build: .
+
+  didakt.api.leaderboard:
+    build:
+      context: ./Didakt.Api.Leaderboard
+      dockerfile: Dockerfile
     ports:
       - "5223:8080"
     environment:
       - ConnectionStrings__Redis=redis:6379
     depends_on:
       - redis
-  auth-service:
-    build: ./auth-service
+
+  didakt.api.auth:
+    build:
+      context: ./Didakt.Api.Auth
+      dockerfile: Dockerfile
     ports:
       - "5224:8080"
