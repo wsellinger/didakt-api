@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Didakt.Api.Leaderboard.Models.Requests;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
 using StackExchange.Redis;
 
@@ -25,7 +26,7 @@ public class EndpointTests
         var gameName = "testGame";
         var playerName = "testPlayer";
         var scoreAmount = 1234;
-        var postScoreRequest = new Endpoints.PostScoreRequest(playerName, scoreAmount);
+        var postScoreRequest = new PostScoreRequest(playerName, scoreAmount);
 
         _database.Setup(x => x.SortedSetAddAsync(It.IsAny<RedisKey>(), It.IsAny<RedisValue>(), It.IsAny<double>()));
 

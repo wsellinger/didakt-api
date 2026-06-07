@@ -1,3 +1,5 @@
+using Didakt.Api.Leaderboard.Models.Requests;
+using Didakt.Api.Leaderboard.Models.Responses;
 using StackExchange.Redis;
 
 namespace Didakt.Api.Leaderboard;
@@ -24,7 +26,6 @@ internal static class Endpoints
     const string KeyBase = "leaderboard:";
 
     //Post Score
-    internal record PostScoreRequest(string Player, double Score);
 
     internal static async Task<IResult> PostScore(string game, PostScoreRequest entry, IConnectionMultiplexer redis)
     {
@@ -42,7 +43,6 @@ internal static class Endpoints
     }
 
     //Get Top Players
-    internal record GetTopPlayersResponse(int Rank, string Player, double Score);
 
     internal static async Task<GetTopPlayersResponse[]> GetTopPlayers(string game, long count, IConnectionMultiplexer redis)
     {

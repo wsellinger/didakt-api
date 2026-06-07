@@ -1,3 +1,4 @@
+using Didakt.Api.Auth.Models.Requests;
 using FluentValidation;
 
 namespace Didakt.Api.Auth;
@@ -18,7 +19,6 @@ internal static class Endpoints
     //=== Endpoints
 
     //Register Player
-    internal record RegisterRequest(string UserName, string Password);
 
     internal static async Task<IResult> PostRegister(RegisterRequest request, IValidator<RegisterRequest> validator)
     {

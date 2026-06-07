@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Didakt.Api.Auth.Models.Requests;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,12 +9,12 @@ namespace Didakt.Api.Auth.Tests;
 
 public class EndpointTests
 {
-    private readonly Mock<IValidator<Endpoints.RegisterRequest>> _validator;
+    private readonly Mock<IValidator<RegisterRequest>> _validator;
 
     public EndpointTests() 
     {
-        _validator = new Mock<IValidator<Endpoints.RegisterRequest>>();
-        _validator.Setup(x => x.ValidateAsync(It.IsAny<Endpoints.RegisterRequest>()))
+        _validator = new Mock<IValidator<RegisterRequest>>();
+        _validator.Setup(x => x.ValidateAsync(It.IsAny<RegisterRequest>()))
             .ReturnsAsync(new ValidationResult()); //IsValid == true
     }
 
@@ -23,7 +24,7 @@ public class EndpointTests
         //Arrange
         var userName = "testUser";
         var password = "testPass";
-        var request = new Endpoints.RegisterRequest(userName, password);
+        var request = new RegisterRequest(userName, password);
 
         //Act
         var result = await Endpoints.PostRegister(request, _validator.Object);
@@ -38,9 +39,9 @@ public class EndpointTests
         //Arrange
         var userName = "testUser";
         var password = "testPass";
-        var request = new Endpoints.RegisterRequest(userName, password);
+        var request = new RegisterRequest(userName, password);
 
-        _validator.Setup(x => x.ValidateAsync(It.IsAny<Endpoints.RegisterRequest>()))
+        _validator.Setup(x => x.ValidateAsync(It.IsAny<RegisterRequest>()))
             .ReturnsAsync(new ValidationResult([new ValidationFailure("", "")])); //IsValid == false
 
         //Act
