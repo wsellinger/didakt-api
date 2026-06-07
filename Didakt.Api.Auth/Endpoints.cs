@@ -16,7 +16,9 @@ internal static class Endpoints
     //=== Endpoints
 
     //Register Player
-    internal static async Task<IResult> PostRegister()
+    internal record RegisterRequest(string UserName, string Password);
+
+    internal static async Task<IResult> PostRegister(RegisterRequest request)
     {
         return Results.Ok();
     }
