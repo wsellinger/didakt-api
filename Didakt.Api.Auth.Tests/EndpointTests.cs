@@ -1,4 +1,5 @@
 ﻿using Didakt.Api.Auth.Models.Requests;
+using Didakt.Api.Auth.Services;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -10,16 +11,21 @@ namespace Didakt.Api.Auth.Tests;
 public class EndpointTests
 {
     private readonly Mock<IValidator<RegisterRequest>> _validator;
+    private readonly Mock<IAuthService> _service;
 
     public EndpointTests() 
     {
         _validator = new Mock<IValidator<RegisterRequest>>();
         _validator.Setup(x => x.ValidateAsync(It.IsAny<RegisterRequest>()))
             .ReturnsAsync(new ValidationResult()); //IsValid == true
+
+        _service = new Mock<IAuthService>();
+        _service.Setup(x => x.RegisterAsync(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(true);
     }
 
     [Fact]
-    public async Task PostScore_Given_ValidInput_Returns_OK()
+    public async Task PostScore_ValidInput_Created()
     {
         //Arrange
         var userName = "testUser";
@@ -27,14 +33,17 @@ public class EndpointTests
         var request = new RegisterRequest(userName, password);
 
         //Act
-        var result = await Endpoints.PostRegister(request, _validator.Object);
+        var result = await Endpoints.PostRegister(request, _validator.Object, _service.Object);
 
         //Assert
-        Assert.IsType<Ok>(result);
+        _validator.Verify(x => x.ValidateAsync(request), Times.Once);
+        _service.Verify(x => x.RegisterAsync(userName, password), Times.Once);
+
+        Assert.IsType<Created>(result);
     }
 
     [Fact]
-    public async Task PostScore_Given_InvalidInput_Returns_BadRequest()
+    public async Task PostScore_InvalidInput_BadRequest()
     {
         //Arrange
         var userName = "testUser";
@@ -45,10 +54,34 @@ public class EndpointTests
             .ReturnsAsync(new ValidationResult([new ValidationFailure("", "")])); //IsValid == false
 
         //Act
-        var result = await Endpoints.PostRegister(request, _validator.Object);
+        var result = await Endpoints.PostRegister(request, _validator.Object, _service.Object);
 
         //Assert
+        _validator.Verify(x => x.ValidateAsync(request), Times.Once);
+        _service.Verify(x => x.RegisterAsync(userName, password), Times.Never);
+
         var problem = Assert.IsType<ProblemHttpResult>(result);
         Assert.Equal(StatusCodes.Status400BadRequest, problem.StatusCode);
+    }
+
+    [Fact]
+    public async Task PostScore_UserExists_Conflict()
+    {
+        //Arrange
+        var userName = "testUser";
+        var password = "testPass";
+        var request = new RegisterRequest(userName, password);
+
+        _service.Setup(x => x.RegisterAsync(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(false);
+
+        //Act
+        var result = await Endpoints.PostRegister(request, _validator.Object, _service.Object);
+
+        //Assert
+        _validator.Verify(x => x.ValidateAsync(request), Times.Once);
+        _service.Verify(x => x.RegisterAsync(userName, password), Times.Once);
+
+        Assert.IsType<Conflict>(result);
     }
 }
