@@ -10,16 +10,12 @@ internal static class Extensions
         internal IServiceCollection AddServices(IConfiguration configuration)
         {
             services.AddOpenApi();
-            AddRedis(services, configuration);
+            services.AddSingleton<IConnectionMultiplexer>(GetConnection(configuration));
 
             return services;
 
-            static void AddRedis(IServiceCollection services, IConfiguration configuration)
-            {
-                var connString = configuration.GetConnectionString("Redis")!;
-                var connection = ConnectionMultiplexer.Connect(connString);
-                services.AddSingleton<IConnectionMultiplexer>(connection);
-            }
+            static ConnectionMultiplexer GetConnection(IConfiguration configuration) 
+                => ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!);
         }
     }
 
