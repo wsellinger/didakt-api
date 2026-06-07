@@ -1,3 +1,4 @@
+using FluentValidation;
 using Scalar.AspNetCore;
 
 namespace Didakt.Api.Auth;
@@ -9,6 +10,7 @@ internal static class Extensions
         internal IServiceCollection AddServices(IConfiguration configuration)
         {
             services.AddOpenApi();
+            services.AddValidatorsFromAssemblyContaining<Program>();
 
             return services;
         }
