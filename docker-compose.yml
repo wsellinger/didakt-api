@@ -4,6 +4,28 @@ services:
     ports:
       - "6379:6379"
 
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: didakt_user
+      POSTGRES_PASSWORD: didakt_pass
+      POSTGRES_DB: didakt
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  didakt.api.auth:
+    build:
+      context: ./Didakt.Api.Auth
+      dockerfile: Dockerfile
+    ports:
+      - "5224:8080"
+    environment:
+      - ConnectionStrings__Postgres=Host=postgres;Database=didakt;Username=didakt_user;Password=didakt_pass
+    depends_on:
+      - postgres
+
   didakt.api.leaderboard:
     build:
       context: ./Didakt.Api.Leaderboard
@@ -14,10 +36,5 @@ services:
       - ConnectionStrings__Redis=redis:6379
     depends_on:
       - redis
-
-  didakt.api.auth:
-    build:
-      context: ./Didakt.Api.Auth
-      dockerfile: Dockerfile
-    ports:
-      - "5224:8080"
+volumes:
+  postgres-data:
