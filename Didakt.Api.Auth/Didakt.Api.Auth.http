@@ -1,0 +1,12 @@
+//Debug
+@HostAddress = http://localhost:5055
+
+//Docker
+//@HostAddress = http://localhost:5224
+
+POST {{HostAddress}}/auth/register
+Content-Type: application/json
+{
+  "userName": "testPlayer",
+  "password": "testPass"
+}
