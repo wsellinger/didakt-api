@@ -8,5 +8,5 @@ POST {{HostAddress}}/auth/register
 Content-Type: application/json
 {
   "userName": "testPlayer",
-  "password": "testPass"
+  "password": "testPassword"
 }

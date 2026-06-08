@@ -1,6 +1,8 @@
 using Didakt.Api.Auth.Data;
+using Didakt.Api.Auth.Models;
 using Didakt.Api.Auth.Services;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Didakt.Api.Auth.Extensions;
@@ -14,6 +16,7 @@ internal static class ServiceExtensions
             services.AddOpenApi();
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddDbContext<AuthDbContext>(options =>
             {
                 options.UseNpgsql(configuration.GetConnectionString("Postgres"));
