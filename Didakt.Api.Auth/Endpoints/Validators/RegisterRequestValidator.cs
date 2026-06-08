@@ -1,7 +1,7 @@
 using Didakt.Api.Auth.Models.Requests;
 using FluentValidation;
 
-namespace Didakt.Api.Auth.Endpoints.Endpoints.Validators;
+namespace Didakt.Api.Auth.Endpoints.Validators;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {

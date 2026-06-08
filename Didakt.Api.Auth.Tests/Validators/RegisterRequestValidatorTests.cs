@@ -1,7 +1,7 @@
-﻿using Didakt.Api.Auth.Models.Requests;
-using Didakt.Api.Auth.Validators;
+﻿using Didakt.Api.Auth.Endpoints.Validators;
+using Didakt.Api.Auth.Models.Requests;
 
-namespace Didakt.Api.Auth.Tests
+namespace Didakt.Api.Auth.Tests.Validators
 {
     public class RegisterRequestValidatorTests
     {

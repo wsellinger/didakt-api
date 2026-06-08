@@ -13,6 +13,7 @@ internal static class EndpointExtensions
         internal WebApplication MapEndpoints()
         {
             app.MapPost("/auth/register", EndpointMethods.PostRegister);
+            app.MapPost("/auth/login", EndpointMethods.PostLogin);
             return app;
         }
     }
@@ -20,10 +21,7 @@ internal static class EndpointExtensions
 
 internal static class EndpointMethods
 {
-
-    //=== Endpoints
-
-    //Register Player
+    //Register
 
     internal static async Task<IResult> PostRegister(RegisterRequest request, IValidator<RegisterRequest> validator, IAuthService service)
     {
@@ -37,5 +35,21 @@ internal static class EndpointMethods
 
         //Return
         return result ? Results.Created() : Results.Conflict();
+    }
+
+    //Login
+
+    internal static async Task<IResult> PostLogin(LoginRequest request, IValidator<LoginRequest> validator, IAuthService service)
+    {
+        //Validate
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        //Service
+        var result = await service.LoginAsync(request.UserName, request.Password);
+
+        //Return
+        return result is not null ? Results.Ok(new LoginResponse(result)) : Results.Unauthorized();
     }
 }

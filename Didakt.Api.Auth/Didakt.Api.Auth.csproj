@@ -27,7 +27,6 @@
   <ItemGroup>
     <Folder Include="Data\Models\" />
     <Folder Include="Services\" />
-    <Folder Include="Endpoints\Validators\" />
   </ItemGroup>
 
 </Project>

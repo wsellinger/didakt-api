@@ -22,4 +22,8 @@ internal class AuthService(AuthDbContext context, IPasswordHasher<User> hasher) 
 
         return true;
     }
+    public Task<string?> LoginAsync(string username, string password)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace Didakt.Api.Auth.Tests
+namespace Didakt.Api.Auth.Tests.Services
 {
     public class AuthServiceTests
     {
@@ -21,6 +21,9 @@ namespace Didakt.Api.Auth.Tests
             _context = new AuthDbContext(options);
             _hasher = new Mock<IPasswordHasher<User>>();
             _service = new AuthService(_context, _hasher.Object);
+
+            _hasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>()))
+                .Returns("testHash");
         }
 
         [Fact]
@@ -29,10 +32,6 @@ namespace Didakt.Api.Auth.Tests
             //Arrange
             var userName = "testUser";
             var password = "testPassword";
-            var hash = "testHash";
-
-            _hasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>()))
-                .Returns(hash);
 
             //Act
             var result = await _service.RegisterAsync(userName, password);
@@ -49,10 +48,6 @@ namespace Didakt.Api.Auth.Tests
             //Arrange
             var userName = "testUser";
             var password = "testPassword";
-            var hash = "testHash";
-
-            _hasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>()))
-                .Returns(hash);
 
             //Act
             await _service.RegisterAsync(userName, password);
