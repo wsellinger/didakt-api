@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Didakt.Api.Auth.Validators;
 
-internal class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
     public RegisterRequestValidator()
     {
