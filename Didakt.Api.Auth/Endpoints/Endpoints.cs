@@ -2,9 +2,9 @@ using Didakt.Api.Auth.Models.Requests;
 using Didakt.Api.Auth.Services;
 using FluentValidation;
 
-namespace Didakt.Api.Auth;
+namespace Didakt.Api.Auth.Endpoints;
 
-internal static class Endpoints
+internal static class EndpointExtensions
 {
     //=== Mappings
 
@@ -12,10 +12,14 @@ internal static class Endpoints
     {
         internal WebApplication MapEndpoints()
         {
-            app.MapPost("/auth/register", PostRegister);
+            app.MapPost("/auth/register", EndpointMethods.PostRegister);
             return app;
         }
     }
+}
+
+internal static class EndpointMethods
+{
 
     //=== Endpoints
 

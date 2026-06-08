@@ -1,5 +1,5 @@
 using Didakt.Api.Auth.Data;
-using Didakt.Api.Auth.Models;
+using Didakt.Api.Auth.Data.Models;
 using Didakt.Api.Auth.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

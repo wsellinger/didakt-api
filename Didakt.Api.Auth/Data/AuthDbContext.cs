@@ -1,4 +1,4 @@
-using Didakt.Api.Auth.Models;
+using Didakt.Api.Auth.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Didakt.Api.Auth.Data;

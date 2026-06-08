@@ -1,4 +1,4 @@
-using Didakt.Api.Auth;
+using Didakt.Api.Auth.Endpoints;
 using Didakt.Api.Auth.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

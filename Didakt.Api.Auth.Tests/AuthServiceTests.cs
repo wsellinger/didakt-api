@@ -1,11 +1,8 @@
 ﻿using Didakt.Api.Auth.Data;
-using Didakt.Api.Auth.Models;
+using Didakt.Api.Auth.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Didakt.Api.Auth.Tests
 {
