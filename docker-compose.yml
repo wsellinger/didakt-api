@@ -25,6 +25,10 @@ services:
       - "5224:8080"
     environment:
       - ConnectionStrings__Postgres=Host=postgres;Database=didakt;Username=didakt_user;Password=didakt_pass
+      - Jwt__Secret=ProdSecretDidakt_MustBeThirtyTwoCharacterLongMinimum
+      - Jwt__Expiry=15
+      - Jwt__Issuer=didakt-api
+      - Jwt__Audiernce=didakt-client
     depends_on:
       - postgres
 

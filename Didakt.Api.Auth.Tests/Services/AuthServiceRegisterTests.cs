@@ -2,17 +2,19 @@
 using Didakt.Api.Auth.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Moq;
 
 namespace Didakt.Api.Auth.Tests.Services
 {
-    public class AuthServiceTests
+    public class AuthServiceRegisterTests
     {
         private readonly AuthDbContext _context;
         private readonly Mock<IPasswordHasher<User>> _hasher;
+        private readonly Mock<IConfiguration> _configuration;
         private readonly AuthService _service;
 
-        public AuthServiceTests() 
+        public AuthServiceRegisterTests() 
         {
             var options = new DbContextOptionsBuilder<AuthDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -20,7 +22,8 @@ namespace Didakt.Api.Auth.Tests.Services
 
             _context = new AuthDbContext(options);
             _hasher = new Mock<IPasswordHasher<User>>();
-            _service = new AuthService(_context, _hasher.Object);
+            _configuration = new Mock<IConfiguration>();
+            _service = new AuthService(_context, _hasher.Object, _configuration.Object);
 
             _hasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>()))
                 .Returns("testHash");
