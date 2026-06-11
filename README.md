@@ -5,4 +5,4 @@ A game backend Api written in .NET 10
 A simple authentication service for registering and logging in users
 
 ## Leaderboard Service
-A simple leaderboard service in, utilizing Docker and Redis
+A simple leaderboard service for posting and getting scores and leaderboards
