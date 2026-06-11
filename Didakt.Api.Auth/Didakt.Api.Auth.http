@@ -1,12 +1,23 @@
 //Debug
-@HostAddress = http://localhost:5055
+@HostAddress = https://localhost:7081
 
 //Docker
 //@HostAddress = http://localhost:5224
 
+//Register
 POST {{HostAddress}}/auth/register
 Content-Type: application/json
 {
   "userName": "testPlayer",
   "password": "testPassword"
 }
+###
+
+//Login
+POST {{HostAddress}}/auth/login
+Content-Type: application/json
+{
+  "userName": "testPlayer",
+  "password": "testPassword"
+}
+###

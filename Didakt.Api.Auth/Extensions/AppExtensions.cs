@@ -12,9 +12,11 @@ internal static class AppExtensions
             {
                 app.MapOpenApi();
                 app.MapScalarApiReference();
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             return app;
         }
