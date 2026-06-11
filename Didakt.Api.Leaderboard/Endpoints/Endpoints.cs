@@ -13,14 +13,16 @@ internal static class Endpoints
         internal WebApplication MapEndpoints()
         {
             var group = app.MapGroup("/leaderboard/{game}/");
-            group.MapPost("score", Endpoints.PostScore).RequireAuthorization();
-            group.MapGet("score", Endpoints.GetScore);
-            group.MapGet("top", Endpoints.GetTopPlayers);
+            group.MapPost("score", EndpointMethods.PostScore).RequireAuthorization();
+            group.MapGet("score", EndpointMethods.GetScore);
+            group.MapGet("top", EndpointMethods.GetTopPlayers);
 
             return app;
         }
     }
-
+}
+internal static class EndpointMethods
+{
     //=== Endpoints
 
     const string KeyBase = "leaderboard:";
