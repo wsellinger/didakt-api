@@ -31,4 +31,8 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <Target Name="StartPostgres" BeforeTargets="Build">
+    <Exec Command="$(ProjectDir)start-postgres.bat" />
+  </Target>
+
 </Project>

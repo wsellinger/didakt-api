@@ -17,8 +17,8 @@
     <InternalsVisibleTo Include="Didakt.Api.Leaderboard.Tests" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <Target Name="StartRedis" BeforeTargets="Build">
+    <Exec Command="$(ProjectDir)start-redis.bat" />
+  </Target>
   
 </Project>
