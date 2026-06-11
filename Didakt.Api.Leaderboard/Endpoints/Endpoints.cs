@@ -13,7 +13,7 @@ internal static class Endpoints
         internal WebApplication MapEndpoints()
         {
             var group = app.MapGroup("/leaderboard/{game}/");
-            group.MapPost("score", Endpoints.PostScore);
+            group.MapPost("score", Endpoints.PostScore).RequireAuthorization();
             group.MapGet("score", Endpoints.GetScore);
             group.MapGet("top", Endpoints.GetTopPlayers);
 

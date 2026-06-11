@@ -4,12 +4,15 @@
 //Docker
 //@leaderboard_service_HostAddress = http://localhost:5223
 
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdFBsYXllciIsImV4cCI6MTc4MTE5NzYyOSwiaXNzIjoiZGlkYWt0LWFwaSIsImF1ZCI6ImRpZGFrdC1jbGllbnQifQ.WNuINBkmQGmWSBgPCUWmyxtF8uY1Lkdt-fuaixx0Smk
+
 //Post Score
 POST {{leaderboard_service_HostAddress}}/leaderboard/testGame/score
+Authorization: Bearer {{token}}
 Content-Type: application/json
 {
-  "player": "testPlayer2",
-  "score": 9500
+  "player": "testPlayer1",
+  "score": 6450
 }
 ###
 
