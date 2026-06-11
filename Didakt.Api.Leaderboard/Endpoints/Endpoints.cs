@@ -2,7 +2,7 @@ using Didakt.Api.Leaderboard.Models.Requests;
 using Didakt.Api.Leaderboard.Models.Responses;
 using StackExchange.Redis;
 
-namespace Didakt.Api.Leaderboard;
+namespace Didakt.Api.Leaderboard.Endpoints;
 
 internal static class Endpoints
 {

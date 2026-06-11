@@ -1,25 +1,24 @@
 //Debug
-@leaderboard_service_HostAddress = http://localhost:58793
+@leaderboard_service_HostAddress = https://localhost:58792
 
 //Docker
 //@leaderboard_service_HostAddress = http://localhost:5223
 
+//Post Score
 POST {{leaderboard_service_HostAddress}}/leaderboard/testGame/score
 Content-Type: application/json
-
 {
-  "player": "testPlayer",
+  "player": "testPlayer2",
   "score": 9500
 }
-
 ###
 
+//Get Score by Player
 GET {{leaderboard_service_HostAddress}}/leaderboard/testGame/score?player=testPlayer
 Content-Type: application/json
-
 ###
 
+//Get Top Players
 GET {{leaderboard_service_HostAddress}}/leaderboard/testGame/top?count=3
 Content-Type: application/json
-
 ###

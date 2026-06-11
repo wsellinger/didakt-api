@@ -1,4 +1,5 @@
-using Didakt.Api.Leaderboard;
+using Didakt.Api.Leaderboard.Endpoints;
+using Didakt.Api.Leaderboard.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServices(builder.Configuration);
