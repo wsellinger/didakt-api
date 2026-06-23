@@ -1,5 +1,5 @@
-# Didakt Api
-A game backend Api written in .NET 10
+# Didakt API
+A game backend API written in .NET 10
 
 ## Auth Service
 A simple authentication service for registering and logging in users
