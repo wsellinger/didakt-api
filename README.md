@@ -1,7 +1,7 @@
-# Didakt Api
+# Didakt API
 A multi-service game backend implementing player authentication and leaderboards. Built with microservice architecture in .NET 10 with minimal APIs and orchestrated by Docker Compose
 
-.NET 10, PostgreSQL, Redis, Docker, xUnit
+.NET 10 · PostgreSQL · Redis · Docker · xUnit
 
 ## Services
 
