@@ -18,7 +18,7 @@
     <InternalsVisibleTo Include="Didakt.Api.Leaderboard.Tests" />
   </ItemGroup>
   
-  <Target Name="StartRedis" BeforeTargets="Build">
+  <Target Name="StartRedis" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="$(ProjectDir)start-redis.bat" />
   </Target>
   
