@@ -1,4 +1,4 @@
-# Didakt Api
+# Didakt API
 ###### Didaktos - That Which Can Be Taught
 A multi-service game backend implementing player authentication and leaderboards. Built with microservice architecture in .NET 10 with minimal APIs and orchestrated by Docker Compose
 
