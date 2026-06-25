@@ -23,9 +23,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5224:8080"
+    env_file:
+      - .env.shared
     environment:
       - ConnectionStrings__Postgres=Host=postgres;Database=didakt;Username=didakt_user;Password=didakt_pass
-      - .env.shared
     depends_on:
       - postgres
 
@@ -35,9 +36,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5223:8080"
+    env_file:
+      - .env.shared
     environment:
       - ConnectionStrings__Redis=redis:6379
-      - .env.shared
     depends_on:
       - redis
 volumes:
