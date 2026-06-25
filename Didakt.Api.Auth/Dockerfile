@@ -9,4 +9,4 @@ RUN dotnet publish Didakt.Api.Auth.csproj -c Release -o /app/publish
 
 FROM base AS final
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "didakt.api.auth.dll"]
+ENTRYPOINT ["dotnet", "Didakt.Api.Auth.dll"]
