@@ -1,0 +1,29 @@
+$kind: collection
+name: Leaderboard
+variables:
+  category: ""
+  authExp: ""
+scripts:
+  - type: http:beforeRequest
+    code: "pm.collectionVariables.set(\"authExp\", Date.now() + 86400000);\r\n"
+auth:
+  - id: 284f51b9-7d8b-48b0-a537-99765045ae5b
+    type: jwt
+    name: JWT Bearer
+    credentials:
+      algorithm: HS256
+      isSecretBase64Encoded: false
+      payload: "{\r
+
+        \    \"exp\": {{authExp}},\r
+
+        \    \"iss\": \"didakt-api\",\r
+
+        \    \"aud\": \"didakt-client\"\r
+
+        }"
+      addTokenTo: header
+      headerPrefix: Bearer
+      queryParamKey: token
+      header: "{}"
+      secret: "{{jwtSecret}}"

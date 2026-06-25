@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{leaderboardHostUrl}}/leaderboard/{{category}}/top?count=3"
+method: GET
+queryParams:
+  count: "3"
+order: 2264

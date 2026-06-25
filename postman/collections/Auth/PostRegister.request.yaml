@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{authHostUrl}}/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"userName\": \"testPlayer_{{userCounter}}\",\r
+
+    \  \"password\": \"{{testPassword}}\"\r
+
+    }"
+examples: .resources/PostRegister.resources/examples
+order: 1248349180056918

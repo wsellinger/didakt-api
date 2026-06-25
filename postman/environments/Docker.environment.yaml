@@ -1,0 +1,13 @@
+name: Docker
+values:
+  - key: authHostUrl
+    value: ''
+  - key: leaderboardHostUrl
+    value: ''
+  - key: testPlayer
+    value: ''
+  - key: token
+    secret: true
+  - key: jwtSecret
+    secret: true
+color: 240

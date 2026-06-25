@@ -1,0 +1,26 @@
+$kind: http-example
+request:
+  url: "{{authHostUrl}}/auth/register"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: "{\r
+
+      \  \"userName\": \"testPlayer_{{userCounter}}\",\r
+
+      \  \"password\": \"{{testPassword}}\"\r
+
+      }"
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    content-length: "0"
+    date: Thu, 25 Jun 2026 17:50:47 GMT
+    server: Kestrel
+  body:
+    type: text
+    content: ""
+order: 1782410344206

@@ -1,0 +1,5 @@
+$kind: collection
+name: Auth
+variables:
+  userCounter: ""
+  testPassword: ""

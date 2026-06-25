@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{leaderboardHostUrl}}/leaderboard/{{category}}/score"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"player\": \"{{testPlayer}}\",\r
+
+    \  \"score\": {{$randomInt}}\r
+
+    }"
+auth:
+  type: inherit
+  credentials:
+    id: 284f51b9-7d8b-48b0-a537-99765045ae5b
+order: 1000

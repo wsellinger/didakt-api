@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{leaderboardHostUrl}}/leaderboard/{{category}}/score?player={{testPlayer}}"
+method: GET
+queryParams:
+  player: "{{testPlayer}}"
+order: 2000

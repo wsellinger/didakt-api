@@ -1,0 +1,28 @@
+$kind: http-example
+request:
+  url: "{{authHostUrl}}/auth/login"
+  method: POST
+  body:
+    type: json
+    content: "{\r
+
+      \  \"userName\": \"{{testPlayer}}\",\r
+
+      \  \"password\": \"{{testPassword}}\"\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-type: application/json; charset=utf-8
+    date: Thu, 25 Jun 2026 18:56:06 GMT
+    server: Kestrel
+    transfer-encoding: chunked
+  body:
+    type: json
+    content: |-
+      {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdFBsYXllciIsImV4cCI6MTc4MjQxNDY2NiwiaXNzIjoiZGlkYWt0LWFwaSIsImF1ZCI6ImRpZGFrdC1jbGllbnQifQ.oMvYMEaggqaQmRGgdDOvyq3NNJ0ZJ4XhvpudWc4vAI8"
+      }
+order: 1782413768403
