@@ -22,7 +22,7 @@ internal class AuthService(AuthDbContext context, IPasswordHasher<User> hasher, 
 
         //Insert New User
         context.Users.Add(user);
-        await context.SaveChangesAsync();
+        var result = await context.SaveChangesAsync();
 
         return true;
     }

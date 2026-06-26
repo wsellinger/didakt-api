@@ -12,7 +12,11 @@
     <File Path="docker-compose.yml" />
     <File Path="README.md" />
   </Folder>
-  <Folder Name="/UnitTests/">
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/IntegrationTests/">
+    <Project Path="Didakt.Api.Auth.IntegrationTests/Didakt.Api.Auth.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/UnitTests/">
     <Project Path="Didakt.Api.Auth.Tests/Didakt.Api.Auth.Tests.csproj" Id="da47265e-b5a9-4550-abff-162d1ea0df06" />
     <Project Path="Didakt.Api.Leaderboard.Tests/Didakt.Api.Leaderboard.Tests.csproj" Id="e6b9864a-93b2-4ef1-9c31-a67a866b1991" />
   </Folder>

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Didakt.Api.Auth.Tests" />
+    <InternalsVisibleTo Include="Didakt.Api.Auth.IntegrationTests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
