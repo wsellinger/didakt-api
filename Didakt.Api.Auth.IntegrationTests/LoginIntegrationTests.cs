@@ -1,4 +1,5 @@
 ﻿using Didakt.Api.Auth.Data;
+using Didakt.Api.Auth.Endpoints.Responses;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

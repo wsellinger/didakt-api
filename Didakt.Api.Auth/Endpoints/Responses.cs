@@ -1,1 +1,7 @@
-internal record LoginResponse(string Token);
+namespace Didakt.Api.Auth.Endpoints
+{
+    namespace Responses
+    {
+        internal record LoginResponse(string Token);
+    }
+}

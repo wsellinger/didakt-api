@@ -1,4 +1,4 @@
-namespace Didakt.Api.Auth.Models
+namespace Didakt.Api.Auth.Endpoints
 {
     namespace Requests
     {

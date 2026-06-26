@@ -1,4 +1,5 @@
-using Didakt.Api.Auth.Models.Requests;
+using Didakt.Api.Auth.Endpoints.Requests;
+using Didakt.Api.Auth.Endpoints.Responses;
 using Didakt.Api.Auth.Services;
 using FluentValidation;
 
