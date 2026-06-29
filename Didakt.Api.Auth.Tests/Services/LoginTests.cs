@@ -9,14 +9,14 @@ using System.Security.Claims;
 
 namespace Didakt.Api.Auth.UnitTests.Services
 {
-    public class AuthServiceLoginTests
+    public class LoginTests
     {
         private readonly AuthDbContext _context;
         private readonly Mock<IPasswordHasher<User>> _hasher;
         private readonly Mock<IConfiguration> _config;
         private readonly AuthService _service;
 
-        public AuthServiceLoginTests() 
+        public LoginTests() 
         {
             var options = new DbContextOptionsBuilder<AuthDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())

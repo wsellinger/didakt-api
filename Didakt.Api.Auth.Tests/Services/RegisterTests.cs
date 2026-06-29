@@ -7,14 +7,14 @@ using Moq;
 
 namespace Didakt.Api.Auth.UnitTests.Services
 {
-    public class AuthServiceRegisterTests
+    public class RegisterTests
     {
         private readonly AuthDbContext _context;
         private readonly Mock<IPasswordHasher<User>> _hasher;
         private readonly Mock<IConfiguration> _configuration;
         private readonly AuthService _service;
 
-        public AuthServiceRegisterTests() 
+        public RegisterTests() 
         {
             var options = new DbContextOptionsBuilder<AuthDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
