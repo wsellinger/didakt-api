@@ -6,20 +6,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;
+using Testcontainers.PostgreSql;
 
 namespace Didakt.Api.Auth.IntegrationTests;
 
-public class RegisterTests : IClassFixture<WebApplicationFactory<Program>>
+public class RegisterTests : IAsyncLifetime
 {
     private const string RegisterRequestUri = "/auth/register";
 
-    private readonly HttpClient _client;
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:17").Build();
+    private HttpClient _client = null!;
+    private WebApplicationFactory<Program> _factory = null!;
 
-    public RegisterTests(WebApplicationFactory<Program> factory)
+    public async Task InitializeAsync()
     {
-        string databaseName = Guid.NewGuid().ToString();
+        await _postgres.StartAsync();
 
-        _client = factory.WithWebHostBuilder(builder =>
+        _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
             {
@@ -33,7 +36,8 @@ public class RegisterTests : IClassFixture<WebApplicationFactory<Program>>
 
                 services.AddDbContext<AuthDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase(databaseName);
+                    options.UseNpgsql(_postgres.GetConnectionString());
+                    options.UseSnakeCaseNamingConvention();
                 });
             });
 
@@ -47,7 +51,18 @@ public class RegisterTests : IClassFixture<WebApplicationFactory<Program>>
                     ["Jwt:ExpiryMinutes"] = "15"
                 });
             });
-        }).CreateClient();
+        });
+        _client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+        await db.Database.MigrateAsync();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _postgres.DisposeAsync();
+        await _factory.DisposeAsync();
     }
 
     [Fact]
