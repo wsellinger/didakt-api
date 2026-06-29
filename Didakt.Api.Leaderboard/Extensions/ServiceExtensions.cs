@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -12,8 +13,10 @@ internal static class ServiceExtensions
         internal IServiceCollection AddServices(IConfiguration configuration)
         {
             services.AddOpenApi();
-            services.AddSingleton<IConnectionMultiplexer>(
-                ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!));
+            services.AddValidatorsFromAssemblyContaining<Program>();
+            services.AddSingleton<IConnectionMultiplexer>(sp => 
+                ConnectionMultiplexer.Connect(
+                    sp.GetRequiredService<IConfiguration>().GetConnectionString("Redis")!));
 
             //Authentication
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

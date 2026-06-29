@@ -15,6 +15,7 @@
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/IntegrationTests/">
     <Project Path="Didakt.Api.Auth.IntegrationTests/Didakt.Api.Auth.IntegrationTests.csproj" />
+    <Project Path="Didakt.Api.Leaderboard.IntegrationTests/Didakt.Api.Leaderboard.IntegrationTests.csproj" />
   </Folder>
   <Folder Name="/Tests/UnitTests/">
     <Project Path="Didakt.Api.Auth.Tests/Didakt.Api.Auth.UnitTests.csproj" Id="da47265e-b5a9-4550-abff-162d1ea0df06" />

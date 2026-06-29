@@ -1,6 +1,7 @@
 using Didakt.Api.Leaderboard.Endpoints.Requests;
 using Didakt.Api.Leaderboard.Endpoints.Responses;
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 
 namespace Didakt.Api.Leaderboard.Endpoints;
@@ -30,7 +31,7 @@ internal static class EndpointMethods
     const string KeyBase = "leaderboard:";
 
     //Post Score
-    internal static async Task<IResult> PostScore(string category, PostScoreRequest request, IValidator<PostScoreRequest> validator, IConnectionMultiplexer redis)
+    internal static async Task<IResult> PostScore(string category, [FromBody] PostScoreRequest request, IValidator<PostScoreRequest> validator, IConnectionMultiplexer redis)
     {
         //Validate
         var validationResult = await validator.ValidateAsync(request);
@@ -44,7 +45,7 @@ internal static class EndpointMethods
     }
 
     //Get Score
-    internal static async Task<IResult> GetScore(string category, GetScoreRequest request, IValidator<GetScoreRequest> validator, IConnectionMultiplexer redis)
+    internal static async Task<IResult> GetScore(string category, [AsParameters] GetScoreRequest request, IValidator<GetScoreRequest> validator, IConnectionMultiplexer redis)
     {
         //Validate
         var validationResult = await validator.ValidateAsync(request);
@@ -58,7 +59,7 @@ internal static class EndpointMethods
     }
 
     //Get Top
-    internal static async Task<IResult> GetTop(string category, GetTopRequest request, IValidator<GetTopRequest> validator, IConnectionMultiplexer redis)
+    internal static async Task<IResult> GetTop(string category, [AsParameters] GetTopRequest request, IValidator<GetTopRequest> validator, IConnectionMultiplexer redis)
     {
         //Validate
         var validationResult = await validator.ValidateAsync(request);
