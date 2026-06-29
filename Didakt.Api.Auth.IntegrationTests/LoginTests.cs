@@ -10,14 +10,14 @@ using System.Net.Http.Json;
 
 namespace Didakt.Api.Auth.IntegrationTests
 {
-    public class LoginIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class LoginTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private const string RegisterRequestUri = "/auth/register";
         private const string LoginRequestUri = "/auth/login";
 
         private readonly HttpClient _client;
 
-        public LoginIntegrationTests(WebApplicationFactory<Program> factory)
+        public LoginTests(WebApplicationFactory<Program> factory)
         {
             string databaseName = Guid.NewGuid().ToString();
 
@@ -53,7 +53,7 @@ namespace Didakt.Api.Auth.IntegrationTests
         }
 
         [Fact]
-        public async Task Login_ValidRequest_OK_HasToken()
+        public async Task ValidRequest_OK_HasToken()
         {
             //Arrange
             var requestBody = new { username = "testUser", password = "testPassword" };
@@ -69,7 +69,7 @@ namespace Didakt.Api.Auth.IntegrationTests
         }
 
         [Fact]
-        public async Task Login_BadCredentials_Unauthorized()
+        public async Task BadCredentials_Unauthorized()
         {
             //Arrange
             var registerBody = new { username = "testUser", password = "testPassword" };

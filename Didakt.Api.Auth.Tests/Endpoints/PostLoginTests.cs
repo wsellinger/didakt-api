@@ -8,24 +8,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Moq;
 
-namespace Didakt.Api.Auth.Tests.Endpoints;
+namespace Didakt.Api.Auth.UnitTests.Endpoints;
 
-public class LoginEndpointTests
+public class PostLoginTests
 {
-    private readonly Mock<IValidator<LoginRequest>> _validator;
-    private readonly Mock<IAuthService> _service;
+    private readonly Mock<IValidator<LoginRequest>> _validator = new();
+    private readonly Mock<IAuthService> _service = new();
 
-    public LoginEndpointTests() 
-    {
-        _validator = new Mock<IValidator<LoginRequest>>();
-        _validator.Setup(x => x.ValidateAsync(It.IsAny<LoginRequest>()))
-            .ReturnsAsync(new ValidationResult()); //IsValid == true
+    private readonly ValidationResult FailedValidation = new([new ValidationFailure("", "")]);
 
-        _service = new Mock<IAuthService>();
-    }
+    public PostLoginTests() { }
 
     [Fact]
-    public async Task PostLogin_ValidInput_Ok_Token()
+    public async Task ValidInput_Ok_Token()
     {
         //Arrange
         var userName = "testUser";
@@ -34,6 +29,7 @@ public class LoginEndpointTests
         var expectedToken = "testToken";
         var expectedLoginResponse = new LoginResponse(expectedToken);
 
+        _validator.Setup(x => x.ValidateAsync(It.IsAny<LoginRequest>())).ReturnsAsync(new ValidationResult());
         _service.Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(expectedToken);
 
@@ -49,15 +45,15 @@ public class LoginEndpointTests
     }
 
     [Fact]
-    public async Task PostLogin_InvalidInput_BadRequest()
+    public async Task InvalidInput_BadRequest()
     {
         //Arrange
         var userName = "testUser";
         var password = "testPass";
         var request = new LoginRequest(userName, password);
 
-        _validator.Setup(x => x.ValidateAsync(It.IsAny<LoginRequest>()))
-            .ReturnsAsync(new ValidationResult([new ValidationFailure("", "")])); //IsValid == false
+        _validator.Setup(x => x.ValidateAsync(It.IsAny<LoginRequest>())).ReturnsAsync(FailedValidation);
+        _service.Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()));
 
         //Act
         var result = await EndpointMethods.PostLogin(request, _validator.Object, _service.Object);
@@ -71,13 +67,14 @@ public class LoginEndpointTests
     }
 
     [Fact]
-    public async Task PostLogin_InvalidCredentials_Unauthorized()
+    public async Task InvalidCredentials_Unauthorized()
     {
         //Arrange
         var userName = "testUser";
         var password = "testPass";
         var request = new LoginRequest(userName, password);
 
+        _validator.Setup(x => x.ValidateAsync(It.IsAny<LoginRequest>())).ReturnsAsync(new ValidationResult());
         _service.Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()));
 
         //Act

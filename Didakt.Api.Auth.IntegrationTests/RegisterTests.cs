@@ -9,13 +9,13 @@ using System.Net.Http.Json;
 
 namespace Didakt.Api.Auth.IntegrationTests;
 
-public class RegisterIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class RegisterTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private const string RegisterRequestUri = "/auth/register";
 
     private readonly HttpClient _client;
 
-    public RegisterIntegrationTests(WebApplicationFactory<Program> factory)
+    public RegisterTests(WebApplicationFactory<Program> factory)
     {
         string databaseName = Guid.NewGuid().ToString();
 
@@ -51,7 +51,7 @@ public class RegisterIntegrationTests : IClassFixture<WebApplicationFactory<Prog
     }
 
     [Fact]
-    public async Task Register_ValidRequest_Created()
+    public async Task ValidRequest_Created()
     {
         //Arrange
         var requestBody = new { username = "testUser", password = "testpassword" };
@@ -64,11 +64,11 @@ public class RegisterIntegrationTests : IClassFixture<WebApplicationFactory<Prog
     }
 
     [Fact]
-    public async Task Register_DuplicateUsername_Conflict()
+    public async Task DuplicateUsername_Conflict()
     {
         //Arrange
         var requestBody = new { username = "testUser", password = "testpassword" };
-        var temp = await _client.PostAsJsonAsync(RegisterRequestUri, requestBody);
+        _ = await _client.PostAsJsonAsync(RegisterRequestUri, requestBody);
 
         //Act
         var response = await _client.PostAsJsonAsync(RegisterRequestUri, requestBody);

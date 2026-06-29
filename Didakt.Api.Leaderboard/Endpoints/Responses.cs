@@ -1,7 +1,8 @@
-namespace Didakt.Api.Leaderboard.Models
+namespace Didakt.Api.Leaderboard.Endpoints
 {
     namespace Responses
     {
-        internal record GetTopPlayersResponse(int Rank, string Player, double Score);
+        internal record GetScoreResponse(double Score);
+        internal record GetTopResponse(int Rank, string Player, double Score);
     }
 }

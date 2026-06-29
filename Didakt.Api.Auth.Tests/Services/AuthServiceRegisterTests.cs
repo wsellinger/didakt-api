@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
 
-namespace Didakt.Api.Auth.Tests.Services
+namespace Didakt.Api.Auth.UnitTests.Services
 {
     public class AuthServiceRegisterTests
     {

@@ -32,7 +32,7 @@ internal static class EndpointMethods
             return Results.ValidationProblem(validationResult.ToDictionary());
 
         //Service
-        var result = await service.RegisterAsync(request.UserName, request.Password);
+        var result = await service.RegisterAsync(request.UserName!, request.Password!);
 
         //Return
         return result ? Results.Created() : Results.Conflict();
@@ -48,7 +48,7 @@ internal static class EndpointMethods
             return Results.ValidationProblem(validationResult.ToDictionary());
 
         //Service
-        var result = await service.LoginAsync(request.UserName, request.Password);
+        var result = await service.LoginAsync(request.UserName!, request.Password!);
 
         //Return
         return result is not null ? Results.Ok(new LoginResponse(result)) : Results.Unauthorized();

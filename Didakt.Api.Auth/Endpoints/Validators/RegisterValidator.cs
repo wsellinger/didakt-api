@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Didakt.Api.Auth.Endpoints.Validators;
 
-public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+public class RegisterValidator : AbstractValidator<RegisterRequest>
 {
-    public RegisterRequestValidator()
+    public RegisterValidator()
     {
         RuleFor(x => x.UserName)
             .NotEmpty()

@@ -1,39 +1,39 @@
 ﻿using Didakt.Api.Auth.Endpoints.Requests;
 using Didakt.Api.Auth.Endpoints.Validators;
 
-namespace Didakt.Api.Auth.Tests.Validators
+namespace Didakt.Api.Auth.UnitTests.Endpoints.Validators
 {
-    public class LoginRequestValidatorTests
+    public class LoginValidatorTests
     {
-        public LoginRequestValidatorTests() { }
-
         [Fact]
-        public void Validate_ValidInput_IsValid()
+        public async Task ValidInput_IsValid()
         {
             //Arrange
             var userName = "testUser";
             var password = "testPass";
             var request = new LoginRequest(userName, password);
-            var validator = new LoginRequestValidator();
+            var validator = new LoginValidator();
 
             //Act
-            var result = validator.Validate(request);
+            var result = await validator.ValidateAsync(request);
 
             //Assert
             Assert.True(result.IsValid);
         }
 
         [Theory]
-        [InlineData("", "123456789012")] //Empty userName
+        [InlineData(null, "123456789012")] //Null UserName
+        [InlineData("", "123456789012")] //Empty UserName
+        [InlineData("12", null)] //Null Password
         [InlineData("12", "")] //Empty Password
-        public void Validate_InvalidInput_IsNotValid(string userName, string password)
+        public async Task InvalidInput_IsNotValid(string? userName, string? password)
         {
             //Arrange
             var request = new LoginRequest(userName, password);
-            var validator = new LoginRequestValidator();
+            var validator = new LoginValidator();
 
             //Act
-            var result = validator.Validate(request);
+            var result = await validator.ValidateAsync(request);
 
             //Assert
             Assert.False(result.IsValid);

@@ -7,7 +7,7 @@ using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Didakt.Api.Auth.Tests.Services
+namespace Didakt.Api.Auth.UnitTests.Services
 {
     public class AuthServiceLoginTests
     {

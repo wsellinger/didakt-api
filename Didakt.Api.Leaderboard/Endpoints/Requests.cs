@@ -1,7 +1,9 @@
-namespace Didakt.Api.Leaderboard.Models
+namespace Didakt.Api.Leaderboard.Endpoints
 {
     namespace Requests
     {
-        internal record PostScoreRequest(string Player, double Score);
+        public record PostScoreRequest(string? Player, double? Score);
+        public record GetScoreRequest(string? Player);
+        public record GetTopRequest(long? Count);
     }
 }

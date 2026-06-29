@@ -1,5 +1,6 @@
-using Didakt.Api.Leaderboard.Models.Requests;
-using Didakt.Api.Leaderboard.Models.Responses;
+using Didakt.Api.Leaderboard.Endpoints.Requests;
+using Didakt.Api.Leaderboard.Endpoints.Responses;
+using FluentValidation;
 using StackExchange.Redis;
 
 namespace Didakt.Api.Leaderboard.Endpoints;
@@ -15,12 +16,13 @@ internal static class Endpoints
             var group = app.MapGroup("/leaderboard/{category}/");
             group.MapPost("score", EndpointMethods.PostScore).RequireAuthorization();
             group.MapGet("score", EndpointMethods.GetScore);
-            group.MapGet("top", EndpointMethods.GetTopPlayers);
+            group.MapGet("top", EndpointMethods.GetTop);
 
             return app;
         }
     }
 }
+
 internal static class EndpointMethods
 {
     //=== Endpoints
@@ -28,29 +30,46 @@ internal static class EndpointMethods
     const string KeyBase = "leaderboard:";
 
     //Post Score
-
-    internal static async Task<IResult> PostScore(string category, PostScoreRequest entry, IConnectionMultiplexer redis)
+    internal static async Task<IResult> PostScore(string category, PostScoreRequest request, IValidator<PostScoreRequest> validator, IConnectionMultiplexer redis)
     {
+        //Validate
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        //Logic
         var db = redis.GetDatabase();
-        await db.SortedSetAddAsync($"{KeyBase}{category}", entry.Player, entry.Score);
+        await db.SortedSetAddAsync($"{KeyBase}{category}", request.Player, request.Score!.Value);
         return Results.Ok();
     }
 
     //Get Score
-    internal static async Task<double> GetScore(string category, string player, IConnectionMultiplexer redis)
+    internal static async Task<IResult> GetScore(string category, GetScoreRequest request, IValidator<GetScoreRequest> validator, IConnectionMultiplexer redis)
     {
+        //Validate
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        //Logic
         var db = redis.GetDatabase();
-        double? score = await db.SortedSetScoreAsync($"{KeyBase}{category}", player);
-        return score ?? 0;
+        double? score = await db.SortedSetScoreAsync($"{KeyBase}{category}", request.Player);
+        return score is not null ? Results.Ok(new GetScoreResponse(score.Value)) : Results.NotFound();
     }
 
-    //Get Top Players
-
-    internal static async Task<GetTopPlayersResponse[]> GetTopPlayers(string category, long count, IConnectionMultiplexer redis)
+    //Get Top
+    internal static async Task<IResult> GetTop(string category, GetTopRequest request, IValidator<GetTopRequest> validator, IConnectionMultiplexer redis)
     {
-        var db = redis.GetDatabase();
-        SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{category}", 0, count - 1, Order.Descending);
+        //Validate
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        //Logic
         var rank = 0;
-        return [.. entries.Select(x => new GetTopPlayersResponse(++rank, x.Element.ToString(), x.Score))];
+        var db = redis.GetDatabase();
+        SortedSetEntry[] entries = await db.SortedSetRangeByRankWithScoresAsync($"{KeyBase}{category}", 0, request.Count!.Value - 1, Order.Descending);
+        GetTopResponse[] result = [.. entries.Select(x => new GetTopResponse(++rank, x.Element.ToString(), x.Score))];
+        return Results.Ok(result);
     }
 }
