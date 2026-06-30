@@ -18,7 +18,7 @@
     <Project Path="Didakt.Api.Leaderboard.IntegrationTests/Didakt.Api.Leaderboard.IntegrationTests.csproj" />
   </Folder>
   <Folder Name="/Tests/UnitTests/">
-    <Project Path="Didakt.Api.Auth.Tests/Didakt.Api.Auth.UnitTests.csproj" Id="da47265e-b5a9-4550-abff-162d1ea0df06" />
-    <Project Path="Didakt.Api.Leaderboard.Tests/Didakt.Api.Leaderboard.UnitTests.csproj" Id="e6b9864a-93b2-4ef1-9c31-a67a866b1991" />
+    <Project Path="Didakt.Api.Auth.UnitTests/Didakt.Api.Auth.UnitTests.csproj" Id="da47265e-b5a9-4550-abff-162d1ea0df06" />
+    <Project Path="Didakt.Api.Leaderboard.UnitTests/Didakt.Api.Leaderboard.UnitTests.csproj" Id="e6b9864a-93b2-4ef1-9c31-a67a866b1991" />
   </Folder>
 </Solution>
