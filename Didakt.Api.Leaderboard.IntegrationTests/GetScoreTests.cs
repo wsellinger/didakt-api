@@ -1,4 +1,5 @@
-﻿using DotNet.Testcontainers.Builders;
+﻿using Didakt.Api.Leaderboard.Endpoints.Responses;
+using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +12,7 @@ using Testcontainers.Redis;
 
 namespace Didakt.Api.Leaderboard.IntegrationTests
 {
-    public class PostScoreTests : IAsyncLifetime
+    public class GetScoreTests : IAsyncLifetime
     {
         private const string RequestUri = "/leaderboard/category/score";
         private const string JwtSecret = "test-secret-key-min-32-chars-long!!";
@@ -76,37 +77,32 @@ namespace Didakt.Api.Leaderboard.IntegrationTests
         {
             //Arrange
             SetBearerToken(GenerateTestToken());
-            var requestBody = new { player = "testPlayer", score = 1234.0 };
+
+            var player = "testPlayer";
+            var score = 1234.0;
+            var parameters = $"?player={player}";
+
+            var postBody = new { player, score } ;
+            await _client.PostAsJsonAsync(RequestUri, postBody);
 
             //Act
-            var response = await _client.PostAsJsonAsync(RequestUri, requestBody);
+            var response = await _client.GetAsync(RequestUri + parameters);
+            var body = await response.Content.ReadFromJsonAsync<GetScoreResponse>();
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(body);
+            Assert.Equal(score, body.Score);
         }
 
-        [Fact]
-        public async Task NoToken_ReturnsUnauthorized()
+        [Theory]
+        [InlineData("")]
+        [InlineData("?player=")]
+        public async Task InvalidInput_ReturnsBadRequest(string parameters)
         {
             //Arrange
-            var requestBody = new { player = "testPlayer", score = 1234.0 };
-
             //Act
-            var response = await _client.PostAsJsonAsync(RequestUri, requestBody);
-
-            //Assert
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task InvalidInput_ReturnsBadRequest()
-        {
-            //Arrange
-            SetBearerToken(GenerateTestToken());
-            var requestBody = new { player = "", score = 1234.0 };
-
-            //Act
-            var response = await _client.PostAsJsonAsync(RequestUri, requestBody);
+            var response = await _client.GetAsync(RequestUri + parameters);
 
             //Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

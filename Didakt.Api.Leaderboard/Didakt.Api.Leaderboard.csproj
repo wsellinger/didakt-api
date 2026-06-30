@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Didakt.Api.Leaderboard.UnitTests" />
+    <InternalsVisibleTo Include="Didakt.Api.Leaderboard.IntegrationTests" />
   </ItemGroup>
   
   <Target Name="StartRedis" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT' AND '$(IsTestProject)' != 'true'">
