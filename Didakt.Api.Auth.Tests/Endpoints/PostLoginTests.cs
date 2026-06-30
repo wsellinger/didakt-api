@@ -26,12 +26,14 @@ public class PostLoginTests
         var userName = "testUser";
         var password = "testPass";
         var request = new LoginRequest(userName, password);
-        var expectedToken = "testToken";
-        var expectedLoginResponse = new LoginResponse(expectedToken);
+        var expectedAccessToken = "testAccessToken";
+        var expectedRefreshToken = "testRefreshToken";
+        var expectedResult = new LoginResult(expectedAccessToken, expectedRefreshToken);
+        var expectedLoginResponse = new LoginResponse(expectedAccessToken, expectedRefreshToken);
 
         _validator.Setup(x => x.ValidateAsync(It.IsAny<LoginRequest>())).ReturnsAsync(new ValidationResult());
         _service.Setup(x => x.LoginAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync(expectedToken);
+            .ReturnsAsync(expectedResult);
 
         //Act
         var result = await EndpointMethods.PostLogin(request, _validator.Object, _service.Object);

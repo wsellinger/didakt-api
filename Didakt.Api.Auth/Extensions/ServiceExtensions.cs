@@ -20,6 +20,7 @@ internal static class ServiceExtensions
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddSingleton(TimeProvider.System);
 
             //PostgreSQL
             services.AddDbContext<AuthDbContext>(options =>

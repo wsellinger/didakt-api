@@ -3,6 +3,7 @@ using Didakt.Api.Auth.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,9 +12,12 @@ namespace Didakt.Api.Auth.UnitTests.Services
 {
     public class LoginTests
     {
+        private const int RefreshExpiryDays = 7;
+
         private readonly AuthDbContext _context;
         private readonly Mock<IPasswordHasher<User>> _hasher;
         private readonly Mock<IConfiguration> _config;
+        private readonly FakeTimeProvider _timeProvider = new(DateTimeOffset.UtcNow);
         private readonly AuthService _service;
 
         public LoginTests() 
@@ -25,13 +29,14 @@ namespace Didakt.Api.Auth.UnitTests.Services
             _context = new AuthDbContext(options);
             _hasher = new Mock<IPasswordHasher<User>>();
             _config = new Mock<IConfiguration>();
-            _service = new AuthService(_context, _hasher.Object, _config.Object);
+            _service = new AuthService(_context, _hasher.Object, _config.Object, _timeProvider);
 
             _hasher.Setup(h => h.VerifyHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(PasswordVerificationResult.Success);
 
             _config.Setup(c => c["Jwt:Secret"]).Returns("testSecret-123456789012345678901234567890");
-            _config.Setup(c => c["Jwt:ExpiryMinutes"]).Returns("15");
+            _config.Setup(c => c["Jwt:AccessExpiryMinutes"]).Returns("15");
+            _config.Setup(c => c["Jwt:RefreshExpiryDays"]).Returns(RefreshExpiryDays.ToString());
             _config.Setup(c => c["Jwt:Issuer"]).Returns("didakt-api");
             _config.Setup(c => c["Jwt:Audience"]).Returns("didakt-client");
         }
@@ -57,7 +62,18 @@ namespace Didakt.Api.Auth.UnitTests.Services
             _hasher.Verify(x => x.VerifyHashedPassword(It.IsAny<User>(), hash, password), Times.Once());
 
             Assert.NotNull(result);
-            Assert.Equal(userName, tokenHandler.ReadJwtToken(result).Claims.First(c => c.Type == ClaimTypes.Name).Value);
+            Assert.NotEmpty(result.AccessToken);
+            Assert.NotEmpty(result.RefreshToken);
+
+            var token = tokenHandler.ReadJwtToken(result.AccessToken);
+            var nameClaim = token.Claims.First(c => c.Type == ClaimTypes.Name);
+            Assert.Equal(userName, nameClaim.Value);
+
+            var refreshTokenInDb = await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.UserId == user.Id);
+            Assert.NotNull(refreshTokenInDb);
+
+            var expectedExpiry = _timeProvider.GetUtcNow().UtcDateTime.AddDays(7);
+            Assert.Equal(expectedExpiry, refreshTokenInDb.ExpiresAt);
         }
 
         [Fact]

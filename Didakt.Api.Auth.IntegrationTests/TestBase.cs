@@ -44,7 +44,8 @@ namespace Didakt.Api.Auth.IntegrationTests
                         ["Jwt:Secret"] = "test-secret-key-min-32-chars-long!!",
                         ["Jwt:Issuer"] = "didakt-api",
                         ["Jwt:Audience"] = "didakt-client",
-                        ["Jwt:ExpiryMinutes"] = "15"
+                        ["Jwt:AccessExpiryMinutes"] = "15",
+                        ["Jwt:RefreshExpiryDays"] = "7"
                     });
                 });
             });

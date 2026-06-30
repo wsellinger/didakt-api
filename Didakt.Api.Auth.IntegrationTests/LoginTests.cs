@@ -22,7 +22,9 @@ namespace Didakt.Api.Auth.IntegrationTests
 
             //Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(body?.Token);
+            Assert.NotNull(body);
+            Assert.NotEmpty(body.AccessToken);
+            Assert.NotEmpty(body.RefreshToken);
         }
 
         [Fact]

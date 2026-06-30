@@ -3,6 +3,7 @@ using Didakt.Api.Auth.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Time.Testing;
 using Moq;
 
 namespace Didakt.Api.Auth.UnitTests.Services
@@ -12,6 +13,7 @@ namespace Didakt.Api.Auth.UnitTests.Services
         private readonly AuthDbContext _context;
         private readonly Mock<IPasswordHasher<User>> _hasher;
         private readonly Mock<IConfiguration> _configuration;
+        private readonly FakeTimeProvider _timeProvider = new(DateTimeOffset.UtcNow);
         private readonly AuthService _service;
 
         public RegisterTests() 
@@ -23,7 +25,7 @@ namespace Didakt.Api.Auth.UnitTests.Services
             _context = new AuthDbContext(options);
             _hasher = new Mock<IPasswordHasher<User>>();
             _configuration = new Mock<IConfiguration>();
-            _service = new AuthService(_context, _hasher.Object, _configuration.Object);
+            _service = new AuthService(_context, _hasher.Object, _configuration.Object, _timeProvider);
 
             _hasher.Setup(x => x.HashPassword(It.IsAny<User>(), It.IsAny<string>()))
                 .Returns("testHash");

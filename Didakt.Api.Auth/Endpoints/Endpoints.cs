@@ -51,6 +51,8 @@ internal static class EndpointMethods
         var result = await service.LoginAsync(request.UserName!, request.Password!);
 
         //Return
-        return result is not null ? Results.Ok(new LoginResponse(result)) : Results.Unauthorized();
+        return result is not null ? 
+            Results.Ok(new LoginResponse(result.AccessToken, result.RefreshToken)) : 
+            Results.Unauthorized();
     }
 }

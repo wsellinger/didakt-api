@@ -1,0 +1,1 @@
+internal record LoginResult(string AccessToken, string RefreshToken);

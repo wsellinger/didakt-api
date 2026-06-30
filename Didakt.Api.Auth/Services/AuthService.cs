@@ -6,55 +6,92 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
-internal class AuthService(AuthDbContext context, IPasswordHasher<User> hasher, IConfiguration configuration) : IAuthService
+internal class AuthService(
+    AuthDbContext Context,
+    IPasswordHasher<User> Hasher,
+    IConfiguration Configuration,
+    TimeProvider TimeProvider) : IAuthService
 {
+    private const int RefreshTokenSizeBytes = 64;
+
     public async Task<bool> RegisterAsync(string username, string password)
     {
         //Check if exists
-        if (await context.Users.AnyAsync(u => u.Name == username))
+        if (await Context.Users.AnyAsync(u => u.Name == username))
             return false;
 
         //Create New User
         var user = new User { Name = username };
-        user.PasswordHash = hasher.HashPassword(user, password);
+        user.PasswordHash = Hasher.HashPassword(user, password);
 
         //Insert New User
-        context.Users.Add(user);
-        var result = await context.SaveChangesAsync();
+        Context.Users.Add(user);
+        var result = await Context.SaveChangesAsync();
 
         return true;
     }
 
-    public async Task<string?> LoginAsync(string username, string password)
+    public async Task<LoginResult?> LoginAsync(string username, string password)
     {
         //Get User
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Name == username);
+        var user = await Context.Users.FirstOrDefaultAsync(u => u.Name == username);
         if (user == null) 
             return null;
 
         //Check Password
-        var result = hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+        var result = Hasher.VerifyHashedPassword(user, user.PasswordHash, password);
         if (result == PasswordVerificationResult.Failed) 
             return null;
 
-        //Generate Token
-        return GenerateToken(user, configuration);
+        //Generate Access Token
+        var accessToken = GenerateAccessToken(user);
+
+        //Generate Refresh Token
+        var refreshToken = await GenerateRefreshTokenAsync(user.Id);
+
+        //Return
+        return new(accessToken, refreshToken);
 
         //Local Functions
 
-        static string GenerateToken(User user, IConfiguration config) => 
+        string GenerateAccessToken(User user) => 
             new JwtSecurityTokenHandler().WriteToken(
                 new JwtSecurityToken(
-                    issuer: config["Jwt:Issuer"],
-                    audience: config["Jwt:Audience"],
+                    issuer: Configuration["Jwt:Issuer"],
+                    audience: Configuration["Jwt:Audience"],
                     claims: [
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, user.Name)],
-                    expires: DateTime.UtcNow.AddMinutes(double.Parse(config["Jwt:ExpiryMinutes"]!)),
+                    expires: UtcDateTimeNow.AddMinutes(GetAccessExpiryMinutes()),
                     signingCredentials: new SigningCredentials(
-                        key: new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
+                        key: new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]!)),
                         algorithm: SecurityAlgorithms.HmacSha256)));
+
+        async Task<string> GenerateRefreshTokenAsync(int userId)
+        {
+            var tokenBytes = RandomNumberGenerator.GetBytes(RefreshTokenSizeBytes);
+            var refreshToken = Convert.ToBase64String(tokenBytes);
+            var tokenHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
+
+            Context.RefreshTokens.Add(new RefreshToken
+            {
+                UserId = userId,
+                TokenHash = tokenHash,
+                ExpiresAt = UtcDateTimeNow.AddDays(GetRefreshExpiryDays())
+            });
+
+            await Context.SaveChangesAsync();
+
+            return refreshToken;
+
+        }
+
+        double GetAccessExpiryMinutes() => double.Parse(Configuration["Jwt:AccessExpiryMinutes"]!);
+        int GetRefreshExpiryDays() => int.Parse(Configuration["Jwt:RefreshExpiryDays"]!);
     }
+
+    private DateTime UtcDateTimeNow => TimeProvider.GetUtcNow().UtcDateTime;
 }

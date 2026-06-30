@@ -28,12 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Models\" />
-    <Folder Include="Services\" />
+    <Folder Include="Services\Models\" />
   </ItemGroup>
 
-  <Target Name="StartPostgres" BeforeTargets="Build" 
-          Condition="'$(OS)' == 'Windows_NT' AND '$(IsTestProject)' != 'true'">
+  <Target Name="StartPostgres" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT' AND '$(IsTestProject)' != 'true'">
     <Exec Command="$(ProjectDir)start-postgres.bat" />
   </Target>
 
