@@ -17,6 +17,7 @@ internal static class EndpointExtensions
             group.MapPost("register", EndpointMethods.PostRegister);
             group.MapPost("login", EndpointMethods.PostLogin);
             group.MapPost("renew", EndpointMethods.PostRenew);
+            group.MapPost("logout", EndpointMethods.PostLogout).RequireAuthorization();
             return app;
         }
     }
@@ -74,5 +75,19 @@ internal static class EndpointMethods
         return result is not null ?
             Results.Ok(new LoginResponse(result.AccessToken, result.RefreshToken)) :
             Results.Unauthorized();
+    }
+
+    internal static async Task<IResult> PostLogout(LogoutRequest request, IValidator<LogoutRequest> validator, IAuthService service)
+    {
+        //Validate
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        //Service
+        var result = await service.LogoutAsync(request.RefreshToken!);
+
+        //Return
+        return result ? Results.Ok() : Results.NotFound();
     }
 }

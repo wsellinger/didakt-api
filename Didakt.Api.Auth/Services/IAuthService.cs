@@ -7,4 +7,5 @@ internal interface IAuthService
     Task<bool> RegisterAsync(string username, string password);
     Task<LoginResult?> LoginAsync(string username, string password);
     Task<LoginResult?> RenewAsync(string refreshToken);
+    Task<bool> LogoutAsync(string refreshToken);
 }

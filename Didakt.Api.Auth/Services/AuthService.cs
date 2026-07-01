@@ -66,17 +66,34 @@ internal class AuthService(
 
 
         //Token Missing, Revoked, or Expired
-        if (existingToken is null || existingToken.RevokedAt is not null || existingToken.ExpiresAt < UtcDateTimeNow)
+        if (!IsRefreshTokenValid(existingToken))
             return null;
 
         //Rotate
-        existingToken.RevokedAt = UtcDateTimeNow;
+        existingToken!.RevokedAt = UtcDateTimeNow;
 
         var newAccessToken = GenerateAccessToken(existingToken.User);
         var newRefreshToken = await GenerateRefreshTokenAsync(existingToken.User.Id);
         await Context.SaveChangesAsync();
 
         return new(newAccessToken, newRefreshToken);
+    }
+
+    public async Task<bool> LogoutAsync(string refreshToken)
+    {
+        var tokenHash = GetTokenHash(refreshToken);
+
+        var existingToken = await Context.RefreshTokens
+            .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash);
+
+        //Token Missing, Revoked, or Expired
+        if (!IsRefreshTokenValid(existingToken))
+            return false;
+
+        existingToken!.RevokedAt = UtcDateTimeNow;
+        await Context.SaveChangesAsync();
+
+        return true;
     }
 
     //=== Private
@@ -119,6 +136,12 @@ internal class AuthService(
 
     private static string GetTokenHash(string refreshToken) => 
         Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
+
+    private bool IsRefreshTokenValid(RefreshToken? token) => 
+        token is not null && 
+        token.RevokedAt is null && 
+        token.ExpiresAt > UtcDateTimeNow;
+
 
     private double AccessExpiryMinutes => double.Parse(Configuration["Jwt:AccessExpiryMinutes"]!);
     private int RefreshExpiryDays => int.Parse(Configuration["Jwt:RefreshExpiryDays"]!);
