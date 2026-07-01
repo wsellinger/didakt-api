@@ -2,6 +2,7 @@
 using Didakt.Api.Auth.Endpoints.Requests;
 using Didakt.Api.Auth.Endpoints.Responses;
 using Didakt.Api.Auth.Services;
+using Didakt.Api.Auth.Services.Models;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +27,7 @@ public class PostLoginTests
         var userName = "testUser";
         var password = "testPass";
         var request = new LoginRequest(userName, password);
+
         var expectedAccessToken = "testAccessToken";
         var expectedRefreshToken = "testRefreshToken";
         var expectedResult = new LoginResult(expectedAccessToken, expectedRefreshToken);

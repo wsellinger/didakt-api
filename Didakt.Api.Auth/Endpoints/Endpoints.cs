@@ -13,8 +13,10 @@ internal static class EndpointExtensions
     {
         internal WebApplication MapEndpoints()
         {
-            app.MapPost("/auth/register", EndpointMethods.PostRegister);
-            app.MapPost("/auth/login", EndpointMethods.PostLogin);
+            var group = app.MapGroup("/auth/");
+            group.MapPost("register", EndpointMethods.PostRegister);
+            group.MapPost("login", EndpointMethods.PostLogin);
+            group.MapPost("renew", EndpointMethods.PostRenew);
             return app;
         }
     }
@@ -53,6 +55,24 @@ internal static class EndpointMethods
         //Return
         return result is not null ? 
             Results.Ok(new LoginResponse(result.AccessToken, result.RefreshToken)) : 
+            Results.Unauthorized();
+    }
+
+    //Renew
+
+    internal static async Task<IResult> PostRenew(RenewRequest request, IValidator<RenewRequest> validator, IAuthService service)
+    {
+        //Validate
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+            return Results.ValidationProblem(validationResult.ToDictionary());
+
+        //Service
+        var result = await service.RenewAsync(request.RefreshToken!);
+
+        //Return
+        return result is not null ?
+            Results.Ok(new LoginResponse(result.AccessToken, result.RefreshToken)) :
             Results.Unauthorized();
     }
 }

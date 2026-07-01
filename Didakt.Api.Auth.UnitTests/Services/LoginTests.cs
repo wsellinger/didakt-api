@@ -15,8 +15,8 @@ namespace Didakt.Api.Auth.UnitTests.Services
         private const int RefreshExpiryDays = 7;
 
         private readonly AuthDbContext _context;
-        private readonly Mock<IPasswordHasher<User>> _hasher;
-        private readonly Mock<IConfiguration> _config;
+        private readonly Mock<IPasswordHasher<User>> _hasher = new();
+        private readonly Mock<IConfiguration> _config = new();
         private readonly FakeTimeProvider _timeProvider = new(DateTimeOffset.UtcNow);
         private readonly AuthService _service;
 
@@ -27,8 +27,6 @@ namespace Didakt.Api.Auth.UnitTests.Services
                 .Options;
 
             _context = new AuthDbContext(options);
-            _hasher = new Mock<IPasswordHasher<User>>();
-            _config = new Mock<IConfiguration>();
             _service = new AuthService(_context, _hasher.Object, _config.Object, _timeProvider);
 
             _hasher.Setup(h => h.VerifyHashedPassword(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -42,7 +40,7 @@ namespace Didakt.Api.Auth.UnitTests.Services
         }
 
         [Fact]
-        public async Task LoginAsync_ValidCredentials_Token()
+        public async Task ValidCredentials_Token()
         {
             //Arrange
             var userName = "testUser";
@@ -77,7 +75,7 @@ namespace Didakt.Api.Auth.UnitTests.Services
         }
 
         [Fact]
-        public async Task LoginAsync_InvalidUser_Null()
+        public async Task InvalidUser_Null()
         {
             //Arrange
             var userName = "testUser";
@@ -93,7 +91,7 @@ namespace Didakt.Api.Auth.UnitTests.Services
         }
 
         [Fact]
-        public async Task LoginAsync_InvalidPassword_Null()
+        public async Task InvalidPassword_Null()
         {
             //Arrange
             var userName = "testUser";

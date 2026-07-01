@@ -1,6 +1,7 @@
 using Didakt.Api.Auth.Data;
 using Didakt.Api.Auth.Data.Models;
 using Didakt.Api.Auth.Services;
+using Didakt.Api.Auth.Services.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -54,44 +55,72 @@ internal class AuthService(
 
         //Return
         return new(accessToken, refreshToken);
-
-        //Local Functions
-
-        string GenerateAccessToken(User user) => 
-            new JwtSecurityTokenHandler().WriteToken(
-                new JwtSecurityToken(
-                    issuer: Configuration["Jwt:Issuer"],
-                    audience: Configuration["Jwt:Audience"],
-                    claims: [
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Name, user.Name)],
-                    expires: UtcDateTimeNow.AddMinutes(GetAccessExpiryMinutes()),
-                    signingCredentials: new SigningCredentials(
-                        key: new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]!)),
-                        algorithm: SecurityAlgorithms.HmacSha256)));
-
-        async Task<string> GenerateRefreshTokenAsync(int userId)
-        {
-            var tokenBytes = RandomNumberGenerator.GetBytes(RefreshTokenSizeBytes);
-            var refreshToken = Convert.ToBase64String(tokenBytes);
-            var tokenHash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
-
-            Context.RefreshTokens.Add(new RefreshToken
-            {
-                UserId = userId,
-                TokenHash = tokenHash,
-                ExpiresAt = UtcDateTimeNow.AddDays(GetRefreshExpiryDays())
-            });
-
-            await Context.SaveChangesAsync();
-
-            return refreshToken;
-
-        }
-
-        double GetAccessExpiryMinutes() => double.Parse(Configuration["Jwt:AccessExpiryMinutes"]!);
-        int GetRefreshExpiryDays() => int.Parse(Configuration["Jwt:RefreshExpiryDays"]!);
     }
 
+    public async Task<LoginResult?> RenewAsync(string refreshToken)
+    {
+        var tokenHash = GetTokenHash(refreshToken);
+        var existingToken = await Context.RefreshTokens
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash);
+
+
+        //Token Missing, Revoked, or Expired
+        if (existingToken is null || existingToken.RevokedAt is not null || existingToken.ExpiresAt < UtcDateTimeNow)
+            return null;
+
+        //Rotate
+        existingToken.RevokedAt = UtcDateTimeNow;
+
+        var newAccessToken = GenerateAccessToken(existingToken.User);
+        var newRefreshToken = await GenerateRefreshTokenAsync(existingToken.User.Id);
+        await Context.SaveChangesAsync();
+
+        return new(newAccessToken, newRefreshToken);
+    }
+
+    //=== Private
+
+    private string GenerateAccessToken(User user)
+    {
+        SigningCredentials signingCredentials = new(
+            key: new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]!)),
+            algorithm: SecurityAlgorithms.HmacSha256);
+
+        IEnumerable<Claim> claims = [
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+            new Claim(ClaimTypes.Name, user.Name)];
+
+        return new JwtSecurityTokenHandler().WriteToken(
+            new JwtSecurityToken(
+                issuer: Configuration["Jwt:Issuer"],
+                audience: Configuration["Jwt:Audience"],
+                claims: claims,
+                expires: UtcDateTimeNow.AddMinutes(AccessExpiryMinutes),
+                signingCredentials: signingCredentials));
+    }
+
+    private async Task<string> GenerateRefreshTokenAsync(int userId)
+    {
+        var tokenBytes = RandomNumberGenerator.GetBytes(RefreshTokenSizeBytes);
+        var refreshToken = Convert.ToBase64String(tokenBytes);
+
+        Context.RefreshTokens.Add(new RefreshToken
+        {
+            UserId = userId,
+            TokenHash = GetTokenHash(refreshToken),
+            ExpiresAt = UtcDateTimeNow.AddDays(RefreshExpiryDays)
+        });
+
+        await Context.SaveChangesAsync();
+
+        return refreshToken;
+    }
+
+    private static string GetTokenHash(string refreshToken) => 
+        Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
+
+    private double AccessExpiryMinutes => double.Parse(Configuration["Jwt:AccessExpiryMinutes"]!);
+    private int RefreshExpiryDays => int.Parse(Configuration["Jwt:RefreshExpiryDays"]!);
     private DateTime UtcDateTimeNow => TimeProvider.GetUtcNow().UtcDateTime;
 }
